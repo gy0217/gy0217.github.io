@@ -1,226 +1,128 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <!--
-    * @Project: 【织家】智慧养老APP - 高保真可交互UI原型
-    * @Version: 5.0 (Definitive Polished Release)
-    * @Author:  资深前端开发工程师 (AI Persona)
-    * @Date:    2023-10-28
-    * @Description:
-    *   此版本为最终打磨版，专注于修复用户反馈的最后几个细节问题，旨在达到交互与视觉的完美状态。
-    *
-    *   核心技术栈:
-    *   - 结构: HTML5
-    *   - 样式: TailwindCSS CDN
-    *   - 交互: 原生 JavaScript (ES6+)
-    *   - 图标: Lucide Icon Library
-    *
-    *   关键特性 V5.0 更新:
-    *   1.  【布局完美修复】: 为所有带有底部导航栏的页面(首页、控制、互动、我的)的主滚动区域增加了底部内边距(padding-bottom)，
-    *       彻底解决内容被底部导航栏遮挡的问题。
-    *   2.  【导航高亮修复】: 重构了JavaScript中更新导航栏高亮状态的函数逻辑，确保点击导航项后，图标和文字颜色能100%准确、
-    *       实时地与当前页面同步。
-    *   3.  【代码保持】: 除上述修复外，未对用户已满意的其他设计和功能做任何改动，保留了V4版本的全部优点。
-    -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>织家 - 高保真交互原型 (V5.0 最终完美版)</title>
+    <title>织家 - 控制页四核心场景静态展示</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background-color: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f0f0f0; padding: 20px; }
         .phone-container { display: flex; gap: 20px; overflow-x: auto; }
-        .page { width: 375px; height: 812px; border: 2px solid #333; border-radius: 40px; background-color: #FDFBF6; overflow: hidden; position: relative; flex-shrink: 0; display: none; flex-direction: column; color: #000000; }
-        .page.active { display: flex; }
-        .static-view .page { display: flex !important; }
-        #page-splash { display: flex; cursor: pointer; }
+        .phone-frame { width: 375px; height: 812px; border: 2px solid #333; border-radius: 40px; background-color: #FDFBF6; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
-        .fade-out-anim { animation: fade-out 0.5s ease-in-out forwards; }
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .fade-in-anim { animation: fade-in 0.5s ease-in-out forwards; }
-        .interactive-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
-        .interactive-card:active { transform: scale(0.98); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); }
-        .custom-toggle { width: 100px; height: 44px; border-radius: 22px; padding: 4px; background-color: #e5e7eb; cursor: pointer; transition: background-color 0.3s ease; display: flex; align-items: center; }
-        .toggle-knob { width: 36px; height: 36px; border-radius: 18px; color: white; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: transform 0.3s ease, background-color 0.3s ease; }
+        .custom-toggle { width: 100px; height: 44px; border-radius: 22px; padding: 4px; background-color: #e5e7eb; cursor: pointer; display: flex; align-items: center; }
+        .toggle-knob { width: 36px; height: 36px; border-radius: 18px; color: white; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .custom-toggle[data-state="on"] .toggle-knob { background-color: #22c55e; transform: translateX(56px); }
         .custom-toggle[data-state="off"] .toggle-knob { background-color: #ef4444; transform: translateX(0px); }
-        .alert-hidden { transform: translateY(-8rem); opacity: 0; }
-        .alert-visible { transform: translateY(0); opacity: 1; }
+        .shadow-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+        .nav-bar { height: 96px; border-top: 1px solid #e5e7eb; background-color: white; display: flex; justify-content: space-around; align-items: center; padding-bottom: 12px; flex-shrink: 0; }
     </style>
 </head>
 <body class="bg-gray-200">
 
-<div class="phone-container static-view" id="phoneContainer">
+<div class="phone-container">
 
-    <!-- 页面 0: 启动页 -->
-    <div id="page-splash" class="page flex-col items-center justify-center space-y-6">
-        <i data-lucide="home" class="w-24 h-24 text-gray-700" style="stroke-width: 1.5;"></i>
-        <h1 class="text-5xl" style="font-family: serif; letter-spacing: 0.2em;">织家</h1>
-        <p class="text-base text-gray-600">科技相伴，温情满屋</p>
-    </div>
-
-    <!-- 页面 1: 首页 -->
-    <div id="page-home" class="page">
-        <!-- V5.0 FIX: 添加了 pb-28 类，确保底部内容不会被导航栏遮挡 -->
-        <main class="flex-grow p-6 space-y-5 overflow-y-auto no-scrollbar pb-28">
-            <header class="flex justify-between items-center"><p class="text-3xl font-bold">6月10日 <span class="text-2xl font-semibold">周二</span><br><span class="text-lg">晴朗，22 ~ 30℃</span></p><i data-lucide="sun" class="w-12 h-12 text-orange-500"></i></header>
-            <section class="bg-white rounded-2xl p-6 flex items-center space-x-4 interactive-card"><i data-lucide="smile" class="w-16 h-16 text-orange-500 flex-shrink-0"></i><div><h2 class="text-2xl font-bold">今天心情不错哦！</h2><p class="text-base">小织已为您记录好心情</p></div></section>
-            <section class="bg-orange-50 rounded-2xl p-4 flex items-start space-x-3 interactive-card"><i data-lucide="brain-circuit" class="w-8 h-8 text-orange-600 flex-shrink-0 mt-1"></i><p class="text-lg">爷爷，早上好！今天天气转凉，记得加件衣服。检测到阳台灯忘关了，需要帮您关掉吗？</p></section>
-            <section><h3 class="text-xl font-bold mb-3">为您推荐</h3><div class="space-y-3"><div class="bg-white rounded-2xl p-4 w-full flex items-center space-x-4 interactive-card"><i data-lucide="moon-star" class="w-10 h-10 text-orange-500 flex-shrink-0"></i><div><p class="text-lg font-bold">安心起夜</p><p class="text-base">轻触开启，下床时夜灯自动亮起</p></div></div><div class="bg-white rounded-2xl p-4 w-full flex items-center space-x-4 interactive-card"><i data-lucide="music-2" class="w-10 h-10 text-blue-500 flex-shrink-0"></i><div><p class="text-lg font-bold">独处关怀</p><p class="text-base">为您播放您最爱的经典老歌</p></div></div></div></section>
-            <section class="grid grid-cols-2 gap-4"><button class="bg-white rounded-2xl p-4 h-32 flex flex-col items-center justify-center space-y-2 interactive-card"><i data-lucide="lightbulb" class="w-12 h-12"></i><span class="text-lg font-semibold">灯光</span></button><button class="bg-white rounded-2xl p-4 h-32 flex flex-col items-center justify-center space-y-2 interactive-card"><i data-lucide="blinds" class="w-12 h-12"></i><span class="text-lg font-semibold">窗帘</span></button><button class="bg-white rounded-2xl p-4 h-32 flex flex-col items-center justify-center space-y-2 interactive-card"><i data-lucide="air-vent" class="w-12 h-12"></i><span class="text-lg font-semibold">空调</span></button><button class="bg-white rounded-2xl p-4 h-32 flex flex-col items-center justify-center space-y-2 interactive-card"><i data-lucide="tv-2" class="w-12 h-12"></i><span class="text-lg font-semibold">电视</span></button></section>
+    <!-- ======================== 1. 客厅 (Living Room) ======================== -->
+    <div class="phone-frame">
+        <header class="p-4 border-b border-gray-200 flex-shrink-0">
+            <div class="flex justify-around items-center">
+                <button class="text-xl font-bold p-2 text-orange-500 scale-110">客厅</button>
+                <button class="text-xl p-2 text-gray-400">卧室</button>
+                <button class="text-xl p-2 text-gray-400">厨房</button>
+                <button class="text-xl p-2 text-gray-400">卫生间</button>
+            </div>
+        </header>
+        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
+            <div class="bg-white rounded-2xl p-5 space-y-4 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lightbulb" class="w-10 h-10 text-orange-500"></i><div><p class="text-xl font-bold">客厅主灯</p><p class="text-base font-semibold">已开启</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div><div class="flex items-center space-x-4"><button class="p-2 rounded-full bg-gray-100"><i data-lucide="minus" class="w-8 h-8"></i></button><div class="flex-grow h-3 bg-gray-200 rounded-full"><div class="w-3/4 h-full bg-orange-500 rounded-full"></div></div><button class="p-2 rounded-full bg-gray-100"><i data-lucide="plus" class="w-8 h-8"></i></button></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="air-vent" class="w-10 h-10 text-blue-500"></i><div><p class="text-xl font-bold">空调</p><p class="text-base font-semibold">制冷中, 26℃</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="tv-2" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">电视</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
         </main>
+        <nav class="nav-bar">
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
+        </nav>
     </div>
 
-    <!-- 页面 2: 控制页 -->
-    <div id="page-control" class="page">
-        <div id="emotion-alert" class="absolute top-4 left-4 right-4 bg-orange-100 p-3 rounded-xl flex items-center space-x-2 shadow-lg transition-all duration-500 alert-hidden"><i data-lucide="sparkles" class="w-6 h-6 text-orange-600"></i><p class="text-base">小织检测到您有些疲惫，已为您调暗卧室灯光。</p></div>
-        <div class="flex-grow flex flex-col"><header class="p-4 border-b border-gray-200 flex-shrink-0"><div id="room-tabs" class="flex justify-around items-center"><button data-target="control-livingroom" class="room-tab text-xl font-bold p-2 text-orange-500 scale-110">客厅</button><button data-target="control-bedroom" class="room-tab text-xl p-2 text-gray-500">卧室</button><button data-target="control-kitchen" class="room-tab text-xl p-2 text-gray-500">厨房</button><button data-target="control-bathroom" class="room-tab text-xl p-2 text-gray-500">卫生间</button></div></header>
-            <!-- V5.0 FIX: 添加了 pb-28 类 -->
-            <main class="flex-grow p-6 overflow-y-auto no-scrollbar relative pb-28">
-                <div id="control-livingroom" class="room-content space-y-5"><div class="bg-white rounded-2xl p-5 space-y-4 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lightbulb" class="w-10 h-10 text-orange-500"></i><div><p class="text-xl font-bold">客厅主灯</p><p class="device-status text-base font-semibold" data-on="已开启" data-off="已关闭">已开启</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div><div class="flex items-center space-x-4"><button class="p-2 rounded-full bg-gray-100"><i data-lucide="minus" class="w-8 h-8"></i></button><div class="flex-grow h-3 bg-gray-200 rounded-full"><div class="w-3/4 h-full bg-orange-500 rounded-full"></div></div><button class="p-2 rounded-full bg-gray-100"><i data-lucide="plus" class="w-8 h-8"></i></button></div></div><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="air-vent" class="w-10 h-10 text-blue-500"></i><div><p class="text-xl font-bold">空调</p><p class="device-status text-base font-semibold" data-on="制冷中, 26℃" data-off="已关闭">制冷中, 26℃</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div></div>
-                <div id="control-bedroom" class="room-content space-y-5 hidden"><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lamp" class="w-10 h-10 text-orange-500"></i><div><p class="text-xl font-bold">床头灯</p><p class="device-status text-base font-semibold" data-on="AI正在为您调节" data-off="已关闭">AI正在为您调节</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="blinds" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">窗帘</p><p class="device-status text-base font-semibold" data-on="已拉开" data-off="已关闭">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div></div>
-                <div id="control-kitchen" class="room-content space-y-5 hidden"><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="flame" class="w-10 h-10 text-red-500"></i><div><p class="text-xl font-bold">燃气阀</p><p class="text-base font-bold text-green-600">状态：安全</p></div></div><div class="text-sm text-gray-500">自动检测</div></div></div><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="wind" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">抽油烟机</p><p class="device-status text-base font-semibold" data-on="已开启" data-off="已关闭">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div></div>
-                <div id="control-bathroom" class="room-content space-y-5 hidden"><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="thermometer-sun" class="w-10 h-10 text-yellow-500"></i><div><p class="text-xl font-bold">浴霸</p><p class="device-status text-base font-semibold" data-on="已开启" data-off="已关闭">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div><div class="bg-white rounded-2xl p-5 interactive-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="fan" class="w-10 h-10 text-blue-500"></i><div><p class="text-xl font-bold">换气扇</p><p class="device-status text-base font-semibold" data-on="运行中" data-off="已关闭">运行中</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div></div>
-            </main>
-            <footer class="p-6 flex-shrink-0"><div class="flex bg-gray-200 rounded-full p-1 text-lg font-bold"><button class="w-1/2 p-3 rounded-full text-center">手动模式</button><button class="w-1/2 p-3 rounded-full bg-black text-white text-center shadow-md">自动模式</button></div></footer>
-        </div>
+    <!-- ======================== 2. 卧室 (Bedroom) ======================== -->
+    <div class="phone-frame">
+        <header class="p-4 border-b border-gray-200 flex-shrink-0">
+            <div class="flex justify-around items-center">
+                <button class="text-xl p-2 text-gray-400">客厅</button>
+                <button class="text-xl font-bold p-2 text-orange-500 scale-110">卧室</button>
+                <button class="text-xl p-2 text-gray-400">厨房</button>
+                <button class="text-xl p-2 text-gray-400">卫生间</button>
+            </div>
+        </header>
+        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lamp" class="w-10 h-10 text-orange-500"></i><div><p class="text-xl font-bold">床头灯</p><p class="text-base font-semibold text-orange-600">AI正在为您调节</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="blinds" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">窗帘</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="wind" class="w-10 h-10 text-green-500"></i><div><p class="text-xl font-bold">空气净化器</p><p class="text-base font-semibold">自动模式</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
+        </main>
+        <nav class="nav-bar">
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
+        </nav>
     </div>
 
-    <!-- 页面 3: 互动页 -->
-    <div id="page-interaction" class="page">
-        <div class="flex-grow flex flex-col overflow-hidden"><header class="p-4 bg-orange-50 border-b border-orange-100 flex items-center space-x-2 flex-shrink-0"><i data-lucide="info" class="w-6 h-6 text-orange-500 flex-shrink-0"></i><p class="text-base flex-grow">小提示：电池是有害垃圾，要单独回收哦。</p></header>
-            <section class="p-4 border-b border-gray-200 flex-shrink-0"><div class="flex justify-around items-start"><div class="flex flex-col items-center space-y-2 text-center w-20 cursor-pointer"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=160&auto=format&fit=crop" class="w-16 h-16 rounded-full border-2 border-orange-400 object-cover"><span class="text-base">儿子</span></div><div class="flex flex-col items-center space-y-2 text-center w-20 cursor-pointer"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286de2?q=80&w=160&auto=format&fit=crop" class="w-16 h-16 rounded-full border-2 border-transparent object-cover"><span class="text-base">女儿</span></div><div class="flex flex-col items-center space-y-2 text-center w-20 cursor-pointer"><img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=160&auto=format&fit=crop" class="w-16 h-16 rounded-full border-2 border-transparent object-cover"><span class="text-base">大儿子</span></div><div class="flex flex-col items-center space-y-2 text-center w-20 cursor-pointer"><img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=160&auto=format&fit=crop" class="w-16 h-16 rounded-full border-2 border-transparent object-cover"><span class="text-base">小女儿</span></div></div></section>
-            <!-- V5.0 FIX: 添加了 pb-28 类 -->
-            <main class="flex-grow p-6 space-y-6 overflow-y-auto no-scrollbar pb-28">
-                <div class="text-center"><span class="bg-gray-200 text-sm px-3 py-1 rounded-full">今天 10:30</span></div><div class="flex items-start space-x-3"><div class="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center shrink-0"><i data-lucide="bell-ring" class="w-7 h-7 text-white"></i></div><div class="bg-white rounded-2xl p-4 shadow-md max-w-xs"><p class="text-lg">小织提醒：该吃降压药啦，别忘了哦。</p></div></div><div class="flex items-start space-x-3"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286de2?q=80&w=100&auto=format&fit=crop" class="w-12 h-12 rounded-full object-cover shrink-0"><div class="bg-white rounded-2xl p-4 shadow-md max-w-xs"><p class="font-bold text-base mb-1">女儿</p><p class="text-lg">爸，最近天热，多喝水，少出门。</p></div></div><div class="flex items-start space-x-3"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" class="w-12 h-12 rounded-full object-cover shrink-0"><button class="bg-orange-500 rounded-2xl p-4 shadow-md flex items-center space-x-4 active:bg-orange-600"><i data-lucide="play" class="w-8 h-8 text-white"></i><p class="text-lg text-white font-bold">语音留言</p></button></div><div class="text-center"><span class="bg-gray-200 text-sm px-3 py-1 rounded-full">昨天 15:00</span></div><div class="flex items-start space-x-3"><div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center shrink-0"><i data-lucide="video" class="w-7 h-7 text-white"></i></div><div class="bg-white rounded-2xl p-4 shadow-md max-w-xs"><p class="text-lg">女儿 通过小织发起了视频通话</p></div></div>
-            </main>
-            <footer class="p-4 bg-gray-100 border-t border-gray-200 flex items-center justify-around flex-shrink-0"><button class="p-4 rounded-full hover:bg-gray-200"><i data-lucide="keyboard" class="w-9 h-9"></i></button><button class="bg-orange-500 w-24 h-24 rounded-full flex items-center justify-center shadow-lg active:scale-95 transition"><i data-lucide="mic" class="w-12 h-12 text-white"></i></button><button class="p-4 rounded-full hover:bg-gray-200"><i data-lucide="smile-plus" class="w-9 h-9"></i></button></footer>
-        </div>
+    <!-- ======================== 3. 厨房 (Kitchen) ======================== -->
+    <div class="phone-frame">
+        <header class="p-4 border-b border-gray-200 flex-shrink-0">
+            <div class="flex justify-around items-center">
+                <button class="text-xl p-2 text-gray-400">客厅</button>
+                <button class="text-xl p-2 text-gray-400">卧室</button>
+                <button class="text-xl font-bold p-2 text-orange-500 scale-110">厨房</button>
+                <button class="text-xl p-2 text-gray-400">卫生间</button>
+            </div>
+        </header>
+        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="flame" class="w-10 h-10 text-red-500"></i><div><p class="text-xl font-bold">燃气阀</p><p class="text-base font-bold text-green-600">状态：安全</p></div></div><div class="text-sm text-gray-500">自动检测</div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="wind" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">抽油烟机</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lightbulb-off" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">厨房顶灯</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
+        </main>
+        <nav class="nav-bar">
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
+        </nav>
     </div>
 
-    <!-- 页面 4: 我的 -->
-    <div id="page-my" class="page">
-        <div class="flex-grow flex flex-col"><header class="p-8 flex items-center space-x-6 bg-amber-100 flex-shrink-0"><img src="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=200&auto=format&fit=crop" class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md"><div><h2 class="text-4xl font-bold">王大爷</h2><p class="text-lg mt-1">今天也要开心呀</p></div></header>
-            <!-- V5.0 FIX: 添加了 pb-28 类 -->
-            <main class="flex-grow p-6 space-y-4 overflow-y-auto no-scrollbar pb-28">
-                <a href="#" class="flex items-center bg-white p-5 rounded-2xl interactive-card"><i data-lucide="heart-pulse" class="w-10 h-10 text-orange-500"></i><div class="ml-5 flex-grow"><p class="text-xl font-bold">情绪档案</p><p class="text-base">查看最近的情绪变化</p></div><i data-lucide="chevron-right" class="w-8 h-8 text-gray-400"></i></a><a href="#" class="flex items-center bg-white p-5 rounded-2xl interactive-card"><i data-lucide="settings-2" class="w-10 h-10 text-blue-500"></i><div class="ml-5 flex-grow"><p class="text-xl font-bold">联动规则设置</p><p class="text-base">自定义设备如何响应</p></div><i data-lucide="chevron-right" class="w-8 h-8 text-gray-400"></i></a><a href="#" class="flex items-center bg-white p-5 rounded-2xl interactive-card"><i data-lucide="leaf" class="w-10 h-10 text-green-500"></i><div class="ml-5 flex-grow"><p class="text-xl font-bold">节能报告</p><p class="text-base">查看本月用电情况</p></div><i data-lucide="chevron-right" class="w-8 h-8 text-gray-400"></i></a><a href="#" class="flex items-center bg-white p-5 rounded-2xl interactive-card"><i data-lucide="paintbrush" class="w-10 h-10 text-purple-500"></i><div class="ml-5 flex-grow"><p class="text-xl font-bold">个性化设置</p><p class="text-base">调节字体大小和方言</p></div><i data-lucide="chevron-right" class="w-8 h-8 text-gray-400"></i></a><a href="#" class="flex items-center bg-white p-5 rounded-2xl interactive-card"><i data-lucide="lock" class="w-10 h-10 text-gray-600"></i><div class="ml-5 flex-grow"><p class="text-xl font-bold">隐私与授权</p><p class="text-base">管理情绪识别功能</p></div><i data-lucide="chevron-right" class="w-8 h-8 text-gray-400"></i></a><a href="#" class="flex items-center bg-white p-5 rounded-2xl interactive-card"><i data-lucide="phone" class="w-10 h-10 text-red-500"></i><div class="ml-5 flex-grow"><p class="text-xl font-bold">联系我们</p><p class="text-base">一键呼叫客服或社区</p></div><i data-lucide="chevron-right" class="w-8 h-8 text-gray-400"></i></a>
-            </main>
-        </div>
+    <!-- ======================== 4. 卫生间 (Bathroom) ======================== -->
+    <div class="phone-frame">
+        <header class="p-4 border-b border-gray-200 flex-shrink-0">
+            <div class="flex justify-around items-center">
+                <button class="text-xl p-2 text-gray-400">客厅</button>
+                <button class="text-xl p-2 text-gray-400">卧室</button>
+                <button class="text-xl p-2 text-gray-400">厨房</button>
+                <button class="text-xl font-bold p-2 text-orange-500 scale-110">卫生间</button>
+            </div>
+        </header>
+        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="thermometer-sun" class="w-10 h-10 text-yellow-500"></i><div><p class="text-xl font-bold">浴霸</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="fan" class="w-10 h-10 text-blue-500"></i><div><p class="text-xl font-bold">换气扇</p><p class="text-base font-semibold">运行中</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
+            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="shower-head" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">热水器</p><p class="text-base font-semibold">保温中, 45℃</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
+        </main>
+        <nav class="nav-bar">
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
+            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
+        </nav>
     </div>
 </div>
 
 <script>
-(() => {
-    'use strict';
-    const phoneContainer = document.getElementById('phoneContainer');
-    const pages = document.querySelectorAll('.page');
-    const splashPage = document.getElementById('page-splash');
-    const emotionAlert = document.getElementById('emotion-alert');
-    const roomTabs = document.querySelectorAll('.room-tab');
-    const roomContents = document.querySelectorAll('.room-content');
-
-    let isInteractiveMode = false;
-    let interactionTimeout = null;
-
-    /**
-     * V5.0 FIX: 
-     * 重构此函数，移除不必要的参数。它现在通过闭包访问 allNavButtons，
-     * 解决了之前高亮状态不同步的bug。
-     */
-    const updateNavHighlight = (allNavButtons, pageId) => {
-         allNavButtons.forEach(btn => {
-            btn.classList.toggle('text-orange-500', btn.dataset.target === pageId);
-            btn.classList.toggle('text-gray-500', btn.dataset.target !== pageId);
-        });
-    };
-
-    const initialize = () => {
-        const navItems = [{ id: 'page-home', icon: 'layout-grid', label: '首页' }, { id: 'page-control', icon: 'sliders-horizontal', label: '控制' }, { id: 'page-interaction', icon: 'message-square', label: '互动' }, { id: 'page-my', icon: 'user', label: '我的' }];
-        const navBarHtml = `<div class="nav-bar absolute bottom-0 left-0 right-0 h-24 bg-white flex justify-around items-center border-t border-gray-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
-            ${navItems.map(item => `<button data-target="${item.id}" class="nav-button flex flex-col items-center justify-center space-y-1 text-gray-500"><i data-lucide="${item.icon}" class="w-8 h-8"></i><span class="text-sm font-bold">${item.label}</span></button>`).join('')}
-        </div>`;
-        pages.forEach(page => {
-            if(page.id !== 'page-splash') page.insertAdjacentHTML('beforeend', navBarHtml);
-        });
-        
-        const allNavButtons = document.querySelectorAll('.nav-button');
-
-        const navigateTo = (pageId) => {
-            if (!isInteractiveMode) return;
-            if (interactionTimeout) clearTimeout(interactionTimeout);
-            emotionAlert.classList.remove('alert-visible');
-            emotionAlert.classList.add('alert-hidden');
-
-            pages.forEach(page => page.classList.remove('active', 'fade-in-anim'));
-            const targetPage = document.getElementById(pageId);
-            if(targetPage) {
-                targetPage.classList.add('active', 'fade-in-anim');
-            }
-            // V5.0 FIX: 确保调用修复后的高亮函数
-            updateNavHighlight(allNavButtons, pageId);
-            
-            if (pageId === 'page-control') {
-                interactionTimeout = setTimeout(() => {
-                    emotionAlert.classList.add('alert-visible');
-                    emotionAlert.classList.remove('alert-hidden');
-                }, 1000);
-            }
-        };
-
-        const toggleInteractiveMode = () => {
-            isInteractiveMode = !isInteractiveMode;
-            phoneContainer.classList.toggle('static-view', !isInteractiveMode);
-            if (isInteractiveMode) {
-                alert('已进入【交互模式】。\n现在可以点击屏幕和按钮进行操作了。');
-                pages.forEach(p => p.classList.remove('active'));
-                splashPage.classList.add('active');
-                updateNavHighlight(allNavButtons, ''); // 进入交互模式时，清空高亮
-            } else {
-                alert('已返回【静态预览模式】。\n所有页面并列展示，方便您审查UI。');
-                pages.forEach(p => p.classList.remove('active', 'fade-in-anim'));
-                updateNavHighlight(allNavButtons, 'page-home'); // 静态预览默认高亮首页
-            }
-        };
-
-        const handleToggleClick = (event) => {
-            const toggle = event.currentTarget;
-            const currentState = toggle.dataset.state;
-            const newState = currentState === 'on' ? 'off' : 'on';
-            toggle.dataset.state = newState;
-            const knob = toggle.querySelector('.toggle-knob');
-            knob.textContent = newState === 'on' ? '开' : '关';
-            const statusElement = toggle.closest('.interactive-card').querySelector('.device-status');
-            if (statusElement) {
-                statusElement.textContent = statusElement.dataset[newState];
-            }
-        };
-        
-        document.body.addEventListener('dblclick', (e) => {
-            if (e.target.closest('.page')) return;
-            toggleInteractiveMode();
-        });
-        splashPage.addEventListener('click', () => { if (isInteractiveMode) navigateTo('page-home'); });
-        allNavButtons.forEach(button => button.addEventListener('click', () => navigateTo(button.dataset.target)));
-        roomTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                roomTabs.forEach(t => t.classList.remove('text-orange-500', 'scale-110', 'font-bold'));
-                tab.classList.add('text-orange-500', 'scale-110', 'font-bold');
-                roomContents.forEach(content => content.classList.toggle('hidden', content.id !== tab.dataset.target));
-            });
-        });
-        document.querySelectorAll('.custom-toggle').forEach(toggle => {
-            toggle.addEventListener('click', handleToggleClick);
-        });
-
+    // This script simply renders the icons. No interactivity is needed for this static showcase.
+    document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
-        updateNavHighlight(allNavButtons, 'page-home');
-        alert('【重要操作提示】\n\n当前为【静态预览模式】\n请【双击手机模型旁边的灰色背景】，即可进入【可交互模式】。');
-    };
-
-    document.addEventListener('DOMContentLoaded', initialize);
-})();
+    });
 </script>
+
 </body>
 </html>
