@@ -1,128 +1,104 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>织家 - 控制页四核心场景静态展示</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f0f0f0; padding: 20px; }
-        .phone-container { display: flex; gap: 20px; overflow-x: auto; }
-        .phone-frame { width: 375px; height: 812px; border: 2px solid #333; border-radius: 40px; background-color: #FDFBF6; overflow: hidden; display: flex; flex-direction: column; flex-shrink: 0; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .custom-toggle { width: 100px; height: 44px; border-radius: 22px; padding: 4px; background-color: #e5e7eb; cursor: pointer; display: flex; align-items: center; }
-        .toggle-knob { width: 36px; height: 36px; border-radius: 18px; color: white; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .custom-toggle[data-state="on"] .toggle-knob { background-color: #22c55e; transform: translateX(56px); }
-        .custom-toggle[data-state="off"] .toggle-knob { background-color: #ef4444; transform: translateX(0px); }
-        .shadow-card { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-        .nav-bar { height: 96px; border-top: 1px solid #e5e7eb; background-color: white; display: flex; justify-content: space-around; align-items: center; padding-bottom: 12px; flex-shrink: 0; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Persona-RP: 豪门修罗场终端</title>
+  
+  <meta name="theme-color" content="#cedbe9">
+  <link rel="manifest" href="metadata.json">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'Space Grotesk', 'Noto Serif SC', serif;
+      background-color: #cedbe9;
+      color: #0f172a;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    #loading-fallback {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #cedbe9;
+      z-index: 9999;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .error-box {
+      background: white;
+      padding: 24px;
+      border: 1px solid black;
+      max-width: 400px;
+      box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); }
+  </style>
+<link rel="stylesheet" href="/index.css">
 </head>
-<body class="bg-gray-200">
+<body>
+  <div id="root"></div>
 
-<div class="phone-container">
-
-    <!-- ======================== 1. 客厅 (Living Room) ======================== -->
-    <div class="phone-frame">
-        <header class="p-4 border-b border-gray-200 flex-shrink-0">
-            <div class="flex justify-around items-center">
-                <button class="text-xl font-bold p-2 text-orange-500 scale-110">客厅</button>
-                <button class="text-xl p-2 text-gray-400">卧室</button>
-                <button class="text-xl p-2 text-gray-400">厨房</button>
-                <button class="text-xl p-2 text-gray-400">卫生间</button>
-            </div>
-        </header>
-        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
-            <div class="bg-white rounded-2xl p-5 space-y-4 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lightbulb" class="w-10 h-10 text-orange-500"></i><div><p class="text-xl font-bold">客厅主灯</p><p class="text-base font-semibold">已开启</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div><div class="flex items-center space-x-4"><button class="p-2 rounded-full bg-gray-100"><i data-lucide="minus" class="w-8 h-8"></i></button><div class="flex-grow h-3 bg-gray-200 rounded-full"><div class="w-3/4 h-full bg-orange-500 rounded-full"></div></div><button class="p-2 rounded-full bg-gray-100"><i data-lucide="plus" class="w-8 h-8"></i></button></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="air-vent" class="w-10 h-10 text-blue-500"></i><div><p class="text-xl font-bold">空调</p><p class="text-base font-semibold">制冷中, 26℃</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="tv-2" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">电视</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
-        </main>
-        <nav class="nav-bar">
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
-        </nav>
+  <!-- 如果 5 秒后页面还是空白，显示此提示 -->
+  <div id="loading-fallback">
+    <div class="error-box">
+      <h2 style="font-weight: bold; margin-bottom: 12px; font-size: 16px;">检测到环境配置异常</h2>
+      <p style="font-size: 12px; color: #666; line-height: 1.6;">
+        由于浏览器的安全限制，直接双击 HTML 文件无法运行。 <br><br>
+        <strong>快速修复：</strong><br>
+        1. 使用 VS Code 打开此文件夹。<br>
+        2. 安装插件 <strong>Live Server</strong>。<br>
+        3. 右键 index.html 点击 "Open with Live Server"。<br>
+        4. 确保你在访问 http://127.0.0.1:5500
+      </p>
     </div>
-
-    <!-- ======================== 2. 卧室 (Bedroom) ======================== -->
-    <div class="phone-frame">
-        <header class="p-4 border-b border-gray-200 flex-shrink-0">
-            <div class="flex justify-around items-center">
-                <button class="text-xl p-2 text-gray-400">客厅</button>
-                <button class="text-xl font-bold p-2 text-orange-500 scale-110">卧室</button>
-                <button class="text-xl p-2 text-gray-400">厨房</button>
-                <button class="text-xl p-2 text-gray-400">卫生间</button>
-            </div>
-        </header>
-        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lamp" class="w-10 h-10 text-orange-500"></i><div><p class="text-xl font-bold">床头灯</p><p class="text-base font-semibold text-orange-600">AI正在为您调节</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="blinds" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">窗帘</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="wind" class="w-10 h-10 text-green-500"></i><div><p class="text-xl font-bold">空气净化器</p><p class="text-base font-semibold">自动模式</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
-        </main>
-        <nav class="nav-bar">
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
-        </nav>
-    </div>
-
-    <!-- ======================== 3. 厨房 (Kitchen) ======================== -->
-    <div class="phone-frame">
-        <header class="p-4 border-b border-gray-200 flex-shrink-0">
-            <div class="flex justify-around items-center">
-                <button class="text-xl p-2 text-gray-400">客厅</button>
-                <button class="text-xl p-2 text-gray-400">卧室</button>
-                <button class="text-xl font-bold p-2 text-orange-500 scale-110">厨房</button>
-                <button class="text-xl p-2 text-gray-400">卫生间</button>
-            </div>
-        </header>
-        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="flame" class="w-10 h-10 text-red-500"></i><div><p class="text-xl font-bold">燃气阀</p><p class="text-base font-bold text-green-600">状态：安全</p></div></div><div class="text-sm text-gray-500">自动检测</div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="wind" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">抽油烟机</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="lightbulb-off" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">厨房顶灯</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
-        </main>
-        <nav class="nav-bar">
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
-        </nav>
-    </div>
-
-    <!-- ======================== 4. 卫生间 (Bathroom) ======================== -->
-    <div class="phone-frame">
-        <header class="p-4 border-b border-gray-200 flex-shrink-0">
-            <div class="flex justify-around items-center">
-                <button class="text-xl p-2 text-gray-400">客厅</button>
-                <button class="text-xl p-2 text-gray-400">卧室</button>
-                <button class="text-xl p-2 text-gray-400">厨房</button>
-                <button class="text-xl font-bold p-2 text-orange-500 scale-110">卫生间</button>
-            </div>
-        </header>
-        <main class="flex-grow p-6 overflow-y-auto no-scrollbar space-y-5">
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="thermometer-sun" class="w-10 h-10 text-yellow-500"></i><div><p class="text-xl font-bold">浴霸</p><p class="text-base font-semibold">已关闭</p></div></div><div class="custom-toggle" data-state="off"><div class="toggle-knob">关</div></div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="fan" class="w-10 h-10 text-blue-500"></i><div><p class="text-xl font-bold">换气扇</p><p class="text-base font-semibold">运行中</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
-            <div class="bg-white rounded-2xl p-5 shadow-card"><div class="flex justify-between items-center"><div class="flex items-center space-x-4"><i data-lucide="shower-head" class="w-10 h-10 text-gray-700"></i><div><p class="text-xl font-bold">热水器</p><p class="text-base font-semibold">保温中, 45℃</p></div></div><div class="custom-toggle" data-state="on"><div class="toggle-knob">开</div></div></div></div>
-        </main>
-        <nav class="nav-bar">
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="layout-grid" class="w-8 h-8"></i><span class="text-sm font-bold">首页</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-orange-500"><i data-lucide="sliders-horizontal" class="w-8 h-8"></i><span class="text-sm font-bold">控制</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="message-square" class="w-8 h-8"></i><span class="text-sm font-bold">互动</span></div>
-            <div class="flex-1 flex flex-col items-center justify-center space-y-1 text-gray-400"><i data-lucide="user" class="w-8 h-8"></i><span class="text-sm font-bold">我的</span></div>
-        </nav>
-    </div>
-</div>
+  </div>
 
 <script>
-    // This script simply renders the icons. No interactivity is needed for this static showcase.
-    document.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
-    });
+  // 注入环境变量补丁
+  window.process = { env: { API_KEY: "" } };
+  
+  // 如果 React 成功挂载，移除提示
+  const observer = new MutationObserver(() => {
+    if (document.querySelector('#root > div')) {
+      document.getElementById('loading-fallback').style.display = 'none';
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.getElementById('root'), { childList: true });
+
+  // 检查协议
+  if (window.location.protocol === 'file:') {
+    console.error("警告：您正在通过 file:// 协议访问。这会导致 ES 模块加载失败。");
+  }
 </script>
 
+<script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+<script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
